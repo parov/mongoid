@@ -21,11 +21,22 @@ module Mongoid
       # @example Set the created at time.
       #   person.set_created_at
       def set_created_at
+
+        self.logger.info "Check before action: timeless is #{timeless}"
+        self.logger.info "Check before action: created_at before is #{created_at}"
+        self.logger.info "Check before action: updated_at_changed is #{updated_at_changed?}"
+
         if !timeless? && !created_at
           time = Time.now.utc
+
+          self.logger.info "Check inside action: time is #{time}"
+
           self.updated_at = time if is_a?(Updated) && !updated_at_changed?
           self.created_at = time
         end
+
+        self.logger.info "Check after action: created_at is #{created_at}"
+        self.logger.info "Check after action: updated_at is #{updated_at}"
 
         self.class.clear_timeless_option
       end
